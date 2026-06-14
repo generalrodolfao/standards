@@ -1,0 +1,56 @@
+# Blueprint: Fullstack Web
+# Para aplicações web completas com API + frontend + banco
+# Referência: lgnd/, park_flow/, apm/
+---
+name: fullstack-web
+version: 1.0.0
+description: Blueprint canônico para aplicação web fullstack
+
+tech_stack:
+  backend: fastapi + sqlalchemy async + alembic
+  schemas: pydantic v2
+  frontend: react + vite + tailwind + shadcn/ui
+  state: zustand
+  database: postgresql 16
+  cache: redis
+  testing: pytest (backend) + vitest (frontend)
+  lint: ruff + mypy (backend) / biome (frontend)
+  infra: docker compose
+
+structure:
+  - backend/app/
+    - main.py          # FastAPI entrypoint
+    - routers/         # rotas da API
+    - models/          # SQLAlchemy models
+    - schemas/         # Pydantic schemas
+    - services/        # lógica de negócio
+    - core/            # config, db, auth
+  - backend/tests/
+    - conftest.py
+    - test_routers/
+    - test_services/
+  - backend/migrations/  # Alembic
+  - frontend/src/
+    - components/
+    - pages/
+    - hooks/
+    - services/          # API client
+    - types/
+
+quality_gates:
+  tests: pytest --cov --cov-fail-under=80 + vitest
+  lint: ruff check . && mypy --strict + biome check .
+  docker: docker compose up funciona
+  rate_limit: slowapi configurado
+  docs: CLAUDE.md + README.md
+
+makefile_targets:
+  - setup: venv + npm install + .env
+  - dev: docker compose up db + backend + frontend
+  - test: pytest + vitest
+  - lint: ruff + mypy + biome
+  - migrate: alembic upgrade head
+
+reference_projects:
+  - lgnd/       # implementação completa, testes, rate limiting
+  - park_flow/  # Docker Compose, frontend/backend

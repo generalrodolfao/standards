@@ -1,0 +1,63 @@
+# Blueprint: Agent System (Opensquad)
+# Para sistemas multi-agente usando Opensquad
+# Referência: content_ag/, gera_netao/
+---
+name: agent-system
+version: 1.0.0
+description: Blueprint canônico para sistemas multi-agente
+
+tech_stack:
+  framework: opensquad
+  agents: yaml-defined (agents/*.agent.yaml)
+  pipeline: yaml-defined (pipeline.yaml)
+  skills: markdown (skills/*/SKILL.md)
+  ai_context: CLAUDE.md
+  agent_config: .claude/
+
+structure:
+  - squad.yaml           # definição do squad
+  - pipeline.yaml        # fluxo de execução
+  - agents/              # agentes (um .agent.yaml cada)
+  - skills/              # skills (uma pasta cada)
+    - skill-name/
+      - SKILL.md
+  - output/              # artefatos gerados
+  - state.json           # estado da execução
+  - _opensquad/          # framework
+  - .claude/
+    - agents/            # agentes Claude Code
+    - skills/            # skills Claude Code
+  - CLAUDE.md            # contexto do projeto
+
+squad_yaml_template:
+  required_fields:
+    - name
+    - version
+    - description
+    - agents[] (cada um com id, name, role, definition, skills)
+    - skills[]
+    - handoff_protocol
+
+pipeline_yaml_template:
+  required_fields:
+    - name
+    - steps[] (cada um com id, name, agents, actions, checkpoint)
+  optional:
+    - conditions (green_signal / red_signal)
+
+agent_yaml_template:
+  required_fields:
+    - model (provider + model_name)
+    - system_prompt
+    - max_tokens
+    - temperature
+
+quality_gates:
+  lint: squad.yaml e pipeline.yaml válidos (YAML)
+  structure: diretórios agents/, skills/, output/ existem
+  checklist: blueprint-checklist executado
+  docs: CLAUDE.md + README.md presentes
+
+reference_projects:
+  - content_ag/  # agentes de conteúdo
+  - gera_netao/  # pipeline ETL com agentes

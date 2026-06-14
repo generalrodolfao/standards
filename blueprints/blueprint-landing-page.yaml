@@ -1,0 +1,40 @@
+# Blueprint: Landing Page
+# Para sites estáticos HTML/CSS/JS puro (sem framework)
+# Referência: bloco26/, secreta/, dviz_pag/
+---
+name: landing-page
+version: 1.0.0
+description: Blueprint canônico para landing pages estáticas
+
+tech_stack:
+  markup: HTML5
+  style: CSS3 (puro ou Tailwind CDN)
+  js: Vanilla JS (opcional)
+  deploy: GitHub Pages / Vercel / Netlify
+  analytics: Google Analytics / Plausible (opcional)
+
+structure:
+  - index.html            # página principal
+  - obrigado.html         # página de confirmação (opcional)
+  - css/
+    - style.css
+  - js/
+    - main.js             # (opcional)
+  - assets/
+    - images/
+    - fonts/
+  - CNAME                 # domínio customizado (opcional)
+  - .gitignore
+  - README.md
+
+quality_gates:
+  doctype: <!DOCTYPE html> presente
+  viewport: <meta name="viewport"> presente
+  responsive: layout funciona em mobile
+  no_cache: sem __pycache__/ ou .venv/
+  deploy: configurado para GitHub Pages
+
+reference_projects:
+  - bloco26/
+  - secreta/
+  - dviz_pag/

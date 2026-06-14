@@ -1,0 +1,85 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["aurum*"]
+
+[project]
+name = "aurum"
+version = "0.4.0"
+description = "Padrão Ouro — validador inteligente de qualidade de projetos"
+requires-python = ">=3.12"
+dependencies = [
+    "typer>=0.15",
+    "rich>=13.0",
+]
+
+[project.urls]
+Repository = "https://github.com/rodolfo/standards"
+Documentation = "https://github.com/rodolfo/standards"
+
+[project.scripts]
+aurum = "aurum.app:app"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=6",
+    "ruff>=0.11",
+    "mypy>=1.15",
+    "pre-commit>=4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["aurum"]
+branch = true
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 55
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203", "D213", "D407", "D416",
+    "ANN101", "ANN102",
+    "CPY001", "TD002", "TD003",
+    "ERA001", "FBT001", "FBT002",
+    "PLR0913",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["S101", "ANN201", "D100", "D101", "D102", "PLR2004", "SLF001"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["tests/*"]
+ignore_errors = true

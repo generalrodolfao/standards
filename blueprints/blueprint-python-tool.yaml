@@ -1,0 +1,47 @@
+# Blueprint: Python Tool
+# Para scripts CLI, utilitários e ferramentas de linha de comando
+# Referência: ext_domi/, nb_pagnussati/, yt_down/
+---
+name: python-tool
+version: 1.0.0
+description: Blueprint canônico para ferramentas Python CLI
+
+tech_stack:
+  language: Python 3.12+
+  cli: argparse / typer / click
+  testing: pytest + pytest-cov
+  lint: ruff + mypy
+  packaging: pyproject.toml entry_points
+
+structure:
+  - main.py               # entry point CLI
+  - src/
+    - core.py             # lógica principal
+    - utils.py            # utilitários
+  - tests/
+    - test_tool.py        # testes
+    - conftest.py
+  - scripts/
+    - setup.sh            # (opcional)
+  - pyproject.toml         # entry_points = {console_scripts = [...]}
+  - Makefile
+  - .env.example
+  - .gitignore
+  - README.md
+
+quality_gates:
+  entry_point: main() / if __name__ presente
+  tests: tests/ com cobertura > 80%
+  docs: README com exemplos de uso
+  packaging: entry_points no pyproject.toml
+  lint: ruff + mypy
+
+makefile_targets:
+  - run: python -m tool_name
+  - test: pytest --cov
+  - install: pip install -e .
+
+reference_projects:
+  - ext_domi/
+  - nb_pagnussati/
+  - yt_down/

@@ -1,0 +1,56 @@
+# Blueprint: AI Agent
+# Para agentes conversacionais com tools, memória e LLM
+# Referência: agent_erp/, fut_gpt/
+---
+name: ai-agent
+version: 1.0.0
+description: Blueprint canônico para agentes de IA
+
+tech_stack:
+  framework: langchain / crewai / openai agents / anthropic
+  llm: openai / anthropic / openrouter
+  memory: conversation buffer / summary / redis
+  tools: custom @tool / API tools / search / calculator
+  api: fastapi (opcional)
+  frontend: streamlit / chainlit / react (opcional)
+  infra: docker compose
+
+structure:
+  - agent.py              # definição do agente
+  - tools/                # tools do agente
+    - __init__.py
+    - search_tool.py
+    - api_tool.py
+  - memory.py             # configuração de memória
+  - prompts/              # system prompts
+    - system.md
+    - few_shot.md
+  - app/
+    - api.py              # FastAPI (opcional)
+    - streamlit_app.py    # UI (opcional)
+  - tests/
+    - test_agent.py       # teste do agente
+    - test_tools.py       # teste das tools
+  - docker-compose.yml
+  - .env.example
+  - Makefile
+  - pyproject.toml
+  - CLAUDE.md
+  - README.md
+
+quality_gates:
+  agent_def: agent.py com classe/executor
+  tools: tools/ com ao menos 1 @tool
+  memory: memória configurada
+  tests: test_agent.py + test_tools.py
+  lint: ruff + mypy
+  docs: CLAUDE.md + README.md
+
+makefile_targets:
+  - run: executa o agente em modo chat
+  - test: pytest --cov
+  - dev: docker compose up
+
+reference_projects:
+  - agent_erp/
+  - fut_gpt/

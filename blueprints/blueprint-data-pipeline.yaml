@@ -1,0 +1,48 @@
+# Blueprint: Data Pipeline
+# Para projetos de ETL/ELT com streaming, transformação, orquestração e serving
+# Referência: case_kaggle/, tirolez_queries/, airflow_aula/
+---
+name: data-pipeline
+version: 1.0.0
+description: Blueprint canônico para pipeline de dados
+
+tech_stack:
+  stream: redpanda
+  storage: minio
+  transform: dbt-core + duckdb
+  orchestration: airflow
+  api: fastapi
+  frontend: react + vite + tailwind
+  ml: scikit-learn + mlflow
+  infra: docker compose
+
+structure:
+  - producer/          # ingestão (Kafka producer)
+  - consumer/          # processamento (Kafka consumer)
+  - dbt/               # transformações (bronze → silver → gold)
+  - airflow/           # orquestração (DAGs)
+  - api/               # serving (FastAPI)
+  - ml/                # ML inference (opcional)
+  - frontend/          # dashboard (React/Vite)
+  - infra/             # Docker Compose
+  - scripts/           # seed, setup
+  - specs/             # documentação do pipeline
+  - data/              # amostras
+
+quality_gates:
+  tests: pytest --cov --cov-fail-under=80
+  lint: ruff check . && mypy --strict
+  docker: docker compose up funciona sem erro
+  docs: specs/ com SPEC numeradas
+
+makefile_targets:
+  - up: docker compose up -d
+  - down: docker compose down
+  - test: pytest em todos os serviços
+  - lint: ruff + mypy em todos os serviços
+  - demo: seed → pipeline → resultado
+
+reference_projects:
+  - case_kaggle/     # implementação completa
+  - tirolez_queries/ # documentação exemplar
+  - airflow_aula/    # Airflow specs

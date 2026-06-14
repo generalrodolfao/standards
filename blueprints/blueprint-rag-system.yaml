@@ -1,0 +1,55 @@
+# Blueprint: RAG System
+# Para projetos de Retrieval-Augmented Generation com vector store + LLM
+# Referência: rag_corporativo/, rag_pdf/, lang_chat/
+---
+name: rag-system
+version: 1.0.0
+description: Blueprint canônico para sistemas RAG
+
+tech_stack:
+  vector_store: chromadb (ou qdrant, pinecone, weaviate)
+  embeddings: openai / ollama / huggingface / voyage
+  llm: openai / anthropic / ollama / openrouter
+  framework: langchain / llama_index / custom
+  api: fastapi (opcional)
+  frontend: streamlit / chainlit / react (opcional)
+  infra: docker compose
+
+structure:
+  - app/
+    - rag_engine.py       # retrieval + generation
+    - embeddings.py       # modelo de embedding
+    - prompt_templates.py # templates de prompt
+    - vector_store.py     # interface com vector db
+  - chroma_db/            # vector store local (gitignorado)
+  - data/                 # documentos fonte
+    - raw/                # originais (PDF, DOCX, TXT)
+    - processed/          # chunked + embedded
+  - tests/
+    - test_rag.py         # teste de retrieval + QA
+  - scripts/
+    - ingest.py           # pipeline de ingestão
+    - query.py            # query interativa
+  - docker-compose.yml
+  - .env.example          # OPENAI_API_KEY, CHROMA_PATH, etc
+  - Makefile
+  - pyproject.toml
+  - README.md
+
+quality_gates:
+  vector_store: chroma_db/ ou equivalente configurado
+  embedding: modelo de embedding configurado
+  tests: test_rag.py com teste de retrieval
+  lint: ruff + mypy
+  docs: CLAUDE.md + README.md
+
+makefile_targets:
+  - ingest: processa documentos → vector store
+  - query: query interativa via CLI
+  - test: pytest --cov
+  - dev: docker compose up
+
+reference_projects:
+  - rag_corporativo/
+  - rag_pdf/
+  - lang_chat/
