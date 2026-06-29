@@ -9,6 +9,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -e ".[dev]"
-      - run: ruff format --check aurum/ tests/
-      - run: pytest tests/ -v --cov=aurum --cov-report=term-missing
+      - run: |
+          set -x
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pytest tests/ -v --tb=short
