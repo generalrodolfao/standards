@@ -39,8 +39,21 @@ def test_report_creation():
 
 def test_report_with_results():
     r = Report(project=Path("/tmp/test"))
+
     def _r(passed, sev, skipped=False):
-        return type("obj", (), {"passed": passed, "severity": sev, "id": "T", "message": "x", "fixable": False, "skipped": skipped})()
+        return type(
+            "obj",
+            (),
+            {
+                "passed": passed,
+                "severity": sev,
+                "id": "T",
+                "message": "x",
+                "fixable": False,
+                "skipped": skipped,
+            },
+        )()
+
     r.results.append(_r(True, Severity.ERROR))
     r.results.append(_r(False, Severity.ERROR))
     assert r.total == 2
@@ -52,20 +65,44 @@ def test_report_with_results():
 class TestGoodProject:
     def test_all_passes(self, python_project: Path):
         report = run_checks(python_project)
-        errors = [r for r in report.results if not r.passed and not r.skipped and r.severity == Severity.ERROR]
-        error_msgs = [f"{r.id}: {r.message} (skipped={r.skipped})" for r in report.results if not r.passed and r.severity == Severity.ERROR]
-        assert not errors, "Checks com ERRO:\n" + "\n".join(error_msgs) + "\n(destes, skipped: {sum(1 for r in report.results if not r.passed and r.skipped)})"
+        errors = [
+            r
+            for r in report.results
+            if not r.passed and not r.skipped and r.severity == Severity.ERROR
+        ]
+        error_msgs = [
+            f"{r.id}: {r.message} (skipped={r.skipped})"
+            for r in report.results
+            if not r.passed and r.severity == Severity.ERROR
+        ]
+        assert not errors, (
+            "Checks com ERRO:\n"
+            + "\n".join(error_msgs)
+            + "\n(destes, skipped: {sum(1 for r in report.results if not r.passed and r.skipped)})"
+        )
         assert report.score >= 80
 
     def test_specific_checks(self, python_project: Path):
         for check_cls in [
-            PyprojectExists, PytestConfigured, CoverageConfigured,
-            TestFilesExist, RuffConfigured, MypyConfigured,
-            MakefileExists, GitignoreExists, GitignoreHasDStore,
-            GitignoreHasPycache, GitignoreHasVenv, GitignoreHasEnv,
-            EnvExampleExists, ReadmeExists,
-            DockerComposeExists, DockerfileExists,
-            CiWorkflowExists, ClaudeMdExists, PreCommitConfigExists,
+            PyprojectExists,
+            PytestConfigured,
+            CoverageConfigured,
+            TestFilesExist,
+            RuffConfigured,
+            MypyConfigured,
+            MakefileExists,
+            GitignoreExists,
+            GitignoreHasDStore,
+            GitignoreHasPycache,
+            GitignoreHasVenv,
+            GitignoreHasEnv,
+            EnvExampleExists,
+            ReadmeExists,
+            DockerComposeExists,
+            DockerfileExists,
+            CiWorkflowExists,
+            ClaudeMdExists,
+            PreCommitConfigExists,
         ]:
             result = check_cls(python_project).run()
             assert result.passed, f"{check_cls.id}: {result.message}"
@@ -113,6 +150,7 @@ class TestBadProject:
 class TestCheckEdgeCases:
     def test_pycache_not_committed(self, tmp_project: Path):
         from aurum.checks import PcacheNotCommitted
+
         result = PcacheNotCommitted(tmp_project).run()
         assert result.passed
 
@@ -131,6 +169,7 @@ class TestCheckEdgeCases:
 
     def test_env_example_fix(self, tmp_project: Path):
         from aurum.checks import EnvExampleExists
+
         result = EnvExampleExists(tmp_project).run()
         assert not result.passed
         result2 = EnvExampleExists(tmp_project)

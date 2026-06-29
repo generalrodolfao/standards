@@ -40,60 +40,68 @@ def run_checks(
         )
 
     for check_cls in ALL_CHECKS:
-            check = check_cls(project)
+        check = check_cls(project)
 
-            if not _is_relevant(check, project_type):
-                report.results.append(CheckResult(
+        if not _is_relevant(check, project_type):
+            report.results.append(
+                CheckResult(
                     id=check.id,
                     message=check.message,
                     severity=check.severity,
                     passed=False,
                     skipped=True,
                     path=project,
-                ))
-                if show_progress:
-                    progress.update(task, advance=1)
-                continue
+                )
+            )
+            if show_progress:
+                progress.update(task, advance=1)
+            continue
 
-            applicable += 1
+        applicable += 1
 
-            if verbose and show_progress:
-                progress.update(task, description=f"[dim]{check.id}[/dim] - {check.message}")
+        if verbose and show_progress:
+            progress.update(task, description=f"[dim]{check.id}[/dim] - {check.message}")
 
-            result = check.run()
-            report.results.append(result)
+        result = check.run()
+        report.results.append(result)
 
-            if fix and not result.passed and result.fixable:
-                try:
-                    check.fix()
-                    after = check.run()
-                    if after.passed:
-                        report.results.append(CheckResult(
+        if fix and not result.passed and result.fixable:
+            try:
+                check.fix()
+                after = check.run()
+                if after.passed:
+                    report.results.append(
+                        CheckResult(
                             id=f"{result.id}-FIXED",
                             message=f"Auto-fix aplicado: {result.message}",
                             severity=Severity.INFO,
                             passed=True,
                             path=result.path,
-                        ))
-                    else:
-                        report.results.append(CheckResult(
+                        )
+                    )
+                else:
+                    report.results.append(
+                        CheckResult(
                             id=f"{result.id}-FAILED",
                             message=f"Auto-fix falhou: {result.message}",
                             severity=Severity.ERROR,
                             passed=False,
                             path=result.path,
-                        ))
-                except Exception:
-                    report.results.append(CheckResult(
+                        )
+                    )
+            except Exception:
+                report.results.append(
+                    CheckResult(
                         id=f"{result.id}-FAILED",
                         message=f"Auto-fix exception: {result.message}",
                         severity=Severity.ERROR,
                         passed=False,
                         path=result.path,
-                    ))
+                    )
+                )
 
-            if show_progress:
-                progress.update(task, advance=1)
+        if show_progress:
+            progress.update(task, advance=1)
 
     if show_progress:
         progress.__exit__(None, None, None)
@@ -109,7 +117,11 @@ def _is_relevant(check: BaseCheck, type_: BlueprintType) -> bool:
         return False
     if check.id.startswith("PY-") and not _has_python_evidence(check.project):
         return False
-    if check.id.startswith("DK-") and type_ == BlueprintType.FULLSTACK_WEB and not _has_python_evidence(check.project):
+    if (
+        check.id.startswith("DK-")
+        and type_ == BlueprintType.FULLSTACK_WEB
+        and not _has_python_evidence(check.project)
+    ):
         return False
     return True
 

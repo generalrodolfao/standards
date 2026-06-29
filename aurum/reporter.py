@@ -20,10 +20,12 @@ class Reporter:
         r = self.report
         type_label = f"  [bold cyan]{r.project_type.value}[/bold cyan]"
         console.print()
-        console.print(Panel(
-            f"[bold]aurum check[/bold]  [dim]{r.project}[/dim]{type_label}",
-            border_style="blue",
-        ))
+        console.print(
+            Panel(
+                f"[bold]aurum check[/bold]  [dim]{r.project}[/dim]{type_label}",
+                border_style="blue",
+            )
+        )
         console.print()
 
         groups: dict[str, list] = {}
@@ -36,7 +38,11 @@ class Reporter:
             label = self._group_label(prefix)
             table = Table(show_header=False, box=None, padding=(0, 1))
             for item in items:
-                color = "green" if item.passed else ("red" if item.severity == Severity.ERROR else "yellow")
+                color = (
+                    "green"
+                    if item.passed
+                    else ("red" if item.severity == Severity.ERROR else "yellow")
+                )
                 icon = item.icon
                 table.add_row(
                     f"[{color}]{icon}[/{color}]",
@@ -88,13 +94,17 @@ class Reporter:
         stats = Columns(parts)
         console.print(stats)
         console.print()
-        console.print(f"Score: [bold {color}]{score}%[/bold {color}]  [dim](tipo: {r.project_type.value})[/dim]")
+        console.print(
+            f"Score: [bold {color}]{score}%[/bold {color}]  [dim](tipo: {r.project_type.value})[/dim]"
+        )
         console.print(f"[{color}]{bar}[/{color}]")
         console.print()
 
         fixable = r.fixable
         if fixable:
-            console.print(f"[yellow]ℹ {len(fixable)} problemas podem ser corrigidos com --fix[/yellow]")
+            console.print(
+                f"[yellow]ℹ {len(fixable)} problemas podem ser corrigidos com --fix[/yellow]"
+            )
 
     def json_output(self) -> str:
         r = self.report
@@ -122,7 +132,7 @@ class Reporter:
 
     def markdown(self) -> str:
         r = self.report
-        lines = [        f"# aurum check: {r.project.name}", ""]
+        lines = [f"# aurum check: {r.project.name}", ""]
         lines.append(f"**Score:** {r.score}% | **Passed:** {r.passed_count}/{r.total}")
         lines.append("")
 

@@ -18,6 +18,7 @@ app = typer.Typer(
 def _version_callback(value: bool) -> None:
     if value:
         from importlib.metadata import version
+
         try:
             v = version("aurum")
         except ImportError:
@@ -41,7 +42,11 @@ def _type_callback(value: str | None) -> BlueprintType | None:
 @app.callback()
 def main(
     version: bool = typer.Option(
-        False, "--version", "-V", help="Mostra versão", callback=_version_callback,
+        False,
+        "--version",
+        "-V",
+        help="Mostra versão",
+        callback=_version_callback,
     ),
 ) -> None:
     pass
@@ -50,24 +55,39 @@ def main(
 @app.command()
 def check(
     project: Path = typer.Argument(
-        ".", help="Caminho do projeto", exists=True, file_okay=False, readable=True,
+        ".",
+        help="Caminho do projeto",
+        exists=True,
+        file_okay=False,
+        readable=True,
     ),
     fix: bool = typer.Option(
-        False, "--fix", help="Tenta corrigir problemas automaticamente",
+        False,
+        "--fix",
+        help="Tenta corrigir problemas automaticamente",
     ),
     json_output: bool = typer.Option(
-        False, "--json", help="Saída em JSON (para CI)",
+        False,
+        "--json",
+        help="Saída em JSON (para CI)",
     ),
     markdown: bool = typer.Option(
-        False, "--md", help="Saída em Markdown",
+        False,
+        "--md",
+        help="Saída em Markdown",
     ),
     project_type: str | None = typer.Option(
-        None, "--type", "-t",
+        None,
+        "--type",
+        "-t",
         help="Tipo de projeto (auto-detect se omitido)",
         callback=_type_callback,
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v", help="Mostra detalhes",
+        False,
+        "--verbose",
+        "-v",
+        help="Mostra detalhes",
     ),
 ) -> None:
     """Audita um projeto contra os padrões de qualidade."""
@@ -90,6 +110,7 @@ def report_to_json(r):
     import json
 
     from .models import Severity
+
     data = {
         "project": str(r.project),
         "project_type": r.project_type.value,
@@ -100,10 +121,15 @@ def report_to_json(r):
         "skipped": r.skipped_count,
         "results": [
             {
-                "id": res.id, "message": res.message,
-                "severity": res.severity.value if isinstance(res.severity, Severity) else res.severity,
-                "passed": res.passed, "skipped": res.skipped,
-                "suggestion": res.suggestion, "fixable": res.fixable,
+                "id": res.id,
+                "message": res.message,
+                "severity": res.severity.value
+                if isinstance(res.severity, Severity)
+                else res.severity,
+                "passed": res.passed,
+                "skipped": res.skipped,
+                "suggestion": res.suggestion,
+                "fixable": res.fixable,
             }
             for res in r.results
         ],
@@ -134,15 +160,21 @@ def report_to_md(r):
 @app.command()
 def init(
     project: Path = typer.Argument(
-        ".", help="Caminho do projeto", file_okay=False, readable=True,
+        ".",
+        help="Caminho do projeto",
+        file_okay=False,
+        readable=True,
     ),
     blueprint: str = typer.Option(
-        "fullstack-web", "--blueprint", "-b",
+        "fullstack-web",
+        "--blueprint",
+        "-b",
         help="Tipo de projeto (data-pipeline, fullstack-web, agent-system, rag-system, ai-agent, landing-page, python-tool)",
     ),
 ) -> None:
     """Inicializa um projeto com os templates padrão."""
     from .fixer import apply_templates
+
     apply_templates(project, blueprint)
     console.print(f"[green]✔[/green] Templates aplicados em [bold]{project}[/bold]")
     console.print("Execute [bold]aurum check[/bold] para verificar")
@@ -152,6 +184,7 @@ def init(
 def blueprints() -> None:
     """Lista blueprints disponíveis."""
     from rich.table import Table
+
     table = Table(title="Blueprints Disponíveis")
     table.add_column("Nome", style="cyan")
     table.add_column("Descrição", style="white")

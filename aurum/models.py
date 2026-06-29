@@ -21,7 +21,6 @@ class BlueprintType(Enum):
     PYTHON_TOOL = "python-tool"
     GENERIC = "generic"
 
-
     @staticmethod
     def detect(project: Path) -> BlueprintType:
         """Detecta o tipo de projeto baseado nos arquivos presentes."""
@@ -38,9 +37,8 @@ class BlueprintType(Enum):
         has_langchain = _has_import(project, "langchain") or has("langchain")
         has_llamaindex = _has_import(project, "llama_index") or has("llama_index")
         has_agent_file = has("agent.py") or has("agents")
-        has_squad_file = (
-            (project / "squad.yaml").exists()
-            or any(p.parent.name == "agents" for p in project.rglob("*.agent.yaml"))
+        has_squad_file = (project / "squad.yaml").exists() or any(
+            p.parent.name == "agents" for p in project.rglob("*.agent.yaml")
         )
         html_files = list(project.glob("*.html"))
         pyproject = has("pyproject.toml")
@@ -61,7 +59,12 @@ class BlueprintType(Enum):
         if html_files and not pyproject and not has_src:
             return BlueprintType.LANDING_PAGE
 
-        if pyproject and has_src and not _has_dir(project, "backend") and not _has_dir(project, "frontend"):
+        if (
+            pyproject
+            and has_src
+            and not _has_dir(project, "backend")
+            and not _has_dir(project, "frontend")
+        ):
             return BlueprintType.PYTHON_TOOL
 
         if _has_dir(project, "backend") or _has_dir(project, "frontend"):
