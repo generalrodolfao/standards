@@ -6,7 +6,6 @@ from pathlib import Path
 
 from .models import BlueprintType, CheckResult, Severity
 
-
 FIX_TEMPLATES = Path(__file__).resolve().parent.parent / "templates"
 
 

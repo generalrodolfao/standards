@@ -2,31 +2,31 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from aurum.engine import run_checks
-from aurum.models import Severity, Report, CheckResult
 from aurum.checks import (
-    PyprojectExists,
-    PytestConfigured,
+    AdrDirExists,
+    CiWorkflowExists,
+    ClaudeMdExists,
     CoverageConfigured,
-    TestFilesExist,
-    RuffConfigured,
-    MypyConfigured,
-    MakefileExists,
-    GitignoreExists,
-    GitignoreHasDStore,
-    GitignoreHasPycache,
-    GitignoreHasVenv,
-    GitignoreHasEnv,
-    EnvExampleExists,
-    ReadmeExists,
     DockerComposeExists,
     DockerfileExists,
     DockerignoreExists,
-    CiWorkflowExists,
-    ClaudeMdExists,
+    EnvExampleExists,
+    GitignoreExists,
+    GitignoreHasDStore,
+    GitignoreHasEnv,
+    GitignoreHasPycache,
+    GitignoreHasVenv,
+    MakefileExists,
+    MypyConfigured,
     PreCommitConfigExists,
-    AdrDirExists,
+    PyprojectExists,
+    PytestConfigured,
+    ReadmeExists,
+    RuffConfigured,
+    TestFilesExist,
 )
+from aurum.engine import run_checks
+from aurum.models import Report, Severity
 
 
 def test_report_creation():
@@ -54,7 +54,7 @@ class TestGoodProject:
         report = run_checks(python_project)
         errors = [r for r in report.results if not r.passed and not r.skipped and r.severity == Severity.ERROR]
         error_msgs = [f"{r.id}: {r.message} (skipped={r.skipped})" for r in report.results if not r.passed and r.severity == Severity.ERROR]
-        assert not errors, f"Checks com ERRO:\n" + "\n".join(error_msgs) + "\n(destes, skipped: {sum(1 for r in report.results if not r.passed and r.skipped)})"
+        assert not errors, "Checks com ERRO:\n" + "\n".join(error_msgs) + "\n(destes, skipped: {sum(1 for r in report.results if not r.passed and r.skipped)})"
         assert report.score >= 80
 
     def test_specific_checks(self, python_project: Path):

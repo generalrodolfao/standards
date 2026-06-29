@@ -6,7 +6,7 @@ import typer
 
 from .engine import run_checks
 from .models import BlueprintType
-from .reporter import console, Reporter
+from .reporter import Reporter, console
 
 app = typer.Typer(
     name="aurum",
@@ -88,6 +88,7 @@ def check(
 
 def report_to_json(r):
     import json
+
     from .models import Severity
     data = {
         "project": str(r.project),
